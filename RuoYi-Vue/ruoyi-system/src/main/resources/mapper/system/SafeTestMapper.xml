@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SafeTestMapper">
+    
+    <resultMap type="com.ruoyi.system.domain.SafeTest" id="SafeTestResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="score"    column="score"    />
+        <result property="status"    column="status"    />
+    </resultMap>
+
+    <sql id="selectSafeTestVo">
+        select id, name, score, status from safe_test
+    </sql>
+
+    <select id="selectSafeTestList" parameterType="SafeTest" resultType="com.ruoyi.system.domain.SafeTest">
+        <include refid="selectSafeTestVo"/>
+        <where>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="score != null "> and score = #{score}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectSafeTestByName" parameterType="String" resultMap="SafeTestResult">
+        <include refid="selectSafeTestVo"/>
+        where name = #{name}
+    </select>
+        
+    <insert id="insertSafeTest" parameterType="SafeTest">
+        insert into safe_test
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="name != null">name,</if>
+            <if test="score != null">score,</if>
+            <if test="status != null">status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null">#{name},</if>
+            <if test="score != null">#{score},</if>
+            <if test="status != null">#{status},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSafeTest" parameterType="SafeTest">
+        update safe_test
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="score != null">score = #{score},</if>
+            <if test="status != null">status = #{status},</if>
+        </trim>
+        where name = #{name}
+    </update>
+
+    <delete id="deleteSafeTestByName" parameterType="String">
+        delete from safe_test where name = #{name}
+    </delete>
+
+    <delete id="deleteSafeTestByNames" parameterType="String">
+        delete from safe_test where name in 
+        <foreach item="name" collection="array" open="(" separator="," close=")">
+            #{name}
+        </foreach>
+    </delete>
+</mapper>
